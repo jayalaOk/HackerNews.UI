@@ -1,0 +1,47 @@
+<div class="example-wrap">
+  <form class="k-form k-form-md" [formGroup]="searchForm">
+    <fieldset class="k-form-fieldset">
+      <legend class="k-form-legend">Search Stories</legend>
+      <kendo-formfield>
+        <kendo-label labelCssClass="k-form-label" text="Title"></kendo-label>
+        <input formControlName="title" kendoTextBox />
+      </kendo-formfield>
+      <div class="k-form-buttons">
+        <button kendoButton themeColor="primary" (click)="search()">
+          Search
+        </button>
+        <button kendoButton themeColor="secondary" (click)="clear()">
+          Clear
+        </button>
+        <button kendoButton themeColor="primary" (click)="reload()">
+          Show New Stories
+        </button>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div>
+  <span class="title"> List of New Stories </span>
+</div>
+<kendo-grid
+  [data]="stories"
+  [loading]="loading"
+  [pageSize]="pageSize"
+  [skip]="skip"
+  [pageable]="true"
+  (pageChange)="pageChange($event)"
+>
+  <kendo-grid-column field="title" title="Title"> </kendo-grid-column>
+  <kendo-grid-column field="url" title="Url">
+    <ng-template kendoGridCellTemplate let-dataItem>
+      <ng-container *ngIf="dataItem.url; else noUrlTemplate">
+        <span (click)="navigateToUrl(dataItem.url)" class="url-column">{{
+          dataItem.url
+        }}</span>
+      </ng-container>
+      <ng-template #noUrlTemplate>
+        <span class="message-column">No URL available</span>
+      </ng-template>
+    </ng-template>
+  </kendo-grid-column>
+</kendo-grid>

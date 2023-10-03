@@ -1,0 +1,31 @@
+.example-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.k-form {
+  width: 400px;
+}
+
+.k-grid td .url-column {
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}
+
+.k-grid td .url-column:hover {
+  color: darkblue;
+}
+.k-grid td .message-column {
+  text-decoration: none;
+  color: red;
+}
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: block;
+}
