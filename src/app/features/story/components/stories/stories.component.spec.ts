@@ -5,16 +5,51 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { Story } from 'src/app/stores/story/story.interface';
 import { PageChangeEvent } from '@progress/kendo-angular-grid';
-
+import { fromStory } from 'src/app/stores/story';
 
 describe('StoriesComponent', () => {
   let component: StoriesComponent;
   let fixture: ComponentFixture<StoriesComponent>;
   let store: MockStore;
-  const initialPage = { skip: 0, take: 10 };
+  const initialPage = { skip: 0, take: 5 };
   const initialState = {
     story: {
       stories: [
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
+        {
+          title: 'My YC app: Dropbox - Throw away your USB drive',
+
+          url: 'http://www.getdropbox.com/u/2/screencast.html',
+        },
         {
           title: 'My YC app: Dropbox - Throw away your USB drive',
 
@@ -34,6 +69,7 @@ describe('StoriesComponent', () => {
     fixture = TestBed.createComponent(StoriesComponent);
     component = fixture.componentInstance;
     store = TestBed.inject(MockStore);
+
     fixture.detectChanges();
   });
 
@@ -41,17 +77,108 @@ describe('StoriesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should handle pageChange', () => {
-    const pageChangeEvent: PageChangeEvent = initialPage;
-    const storiesList: Story[] = [
+  it('should call showStories$ when reload is called', () => {
+    const dummyStories: Story[] = [
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
       {
         title: 'My YC app: Dropbox - Throw away your USB drive',
 
         url: 'http://www.getdropbox.com/u/2/screencast.html',
       },
     ];
+
+    store.overrideSelector(fromStory.selectStories, dummyStories);
+    store.overrideSelector(fromStory.selectLoading, false);
+    spyOn(store, 'dispatch').and.callThrough();
+
+    component.reload();
+    fixture.detectChanges();
+
+    expect(component.storiesList).toEqual(dummyStories);
+    expect(store.dispatch).toHaveBeenCalledWith(fromStory.load());
+  });
+
+  it('should handle pageChange', () => {
+    const pageChangeEvent: PageChangeEvent = { skip: 1, take: 5 };
+    const storiesList: Story[] = [
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+      {
+        title: 'My YC app: Dropbox - Throw away your USB drive',
+
+        url: 'http://www.getdropbox.com/u/2/screencast.html',
+      },
+    ];
+    component.pageSize = 5;
     component.storiesList = storiesList;
-    component.stories = { data: [], total: 0 };
+
     component.pageChange(pageChangeEvent);
 
     expect(component.stories).toEqual({
@@ -66,7 +193,6 @@ describe('StoriesComponent', () => {
   it('should handle pageChange when take is zero', () => {
     const storiesList: Story[] = [];
     component.storiesList = storiesList;
-
     const pageChangeEvent: PageChangeEvent = { skip: 0, take: 0 };
 
     component.pageChange(pageChangeEvent);

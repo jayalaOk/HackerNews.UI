@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { Observable, Subject, takeUntil, tap } from 'rxjs';
+import { PageChangeEvent } from '@progress/kendo-angular-grid';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Story } from 'src/app/stores/story/story.interface';
@@ -21,7 +21,7 @@ export class StoriesComponent implements OnInit, OnDestroy {
   public loading: boolean = false;
   public pageSize: number = 10;
   public skip: number = 0;
-  
+
   public loading$: Observable<boolean> = this.store.select(
     fromLoading.selectLoading
   );
@@ -33,8 +33,8 @@ export class StoriesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.dispatch(fromStory.load());
-    this.showStories();
-    this.showLoading();
+    this.showStories$.subscribe();
+    this.showLoading$.subscribe();
   }
   public pageChange(state: PageChangeEvent): void {
     this.skip = state.skip;
@@ -45,11 +45,11 @@ export class StoriesComponent implements OnInit, OnDestroy {
   }
 
   public searchForm: FormGroup = new FormGroup({
-    title: new FormControl('')
+    title: new FormControl(''),
   });
 
   public search(): void {
-    var searchValue = this.searchForm.get('title')?.value.toLowerCase(); 
+    var searchValue = this.searchForm.get('title')?.value.toLowerCase();
     var data = this.storiesList.filter((x) =>
       x.title.toLowerCase().includes(searchValue)
     );
@@ -57,33 +57,34 @@ export class StoriesComponent implements OnInit, OnDestroy {
       data: data.slice(this.skip, this.skip + this.pageSize),
       total: data.length,
     };
-   
   }
 
   public clear(): void {
     this.searchForm.reset();
   }
-  public showLoading() {
-    this.loading$
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((result) => {
+  get showLoading$(): Observable<boolean> {
+    return this.loading$.pipe(
+      takeUntil(this.componentDestroyed$),
+      tap((result) => {
         this.loading = result;
-      });
+      })
+    );
   }
-  public showStories() {
-    this.stories$
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((result) => {
+  get showStories$(): Observable<Story[]> {
+    return this.stories$.pipe(
+      takeUntil(this.componentDestroyed$),
+      tap((result) => {
         this.storiesList = result;
         this.stories = {
           data: this.storiesList.slice(this.skip, this.skip + this.pageSize),
           total: this.storiesList.length,
         };
-      });
+      })
+    );
   }
   public reload(): void {
     this.store.dispatch(fromStory.load());
-    this.showStories();
+    this.showStories$.subscribe();
   }
   navigateToUrl(url: string) {
     window.open(url, '_blank');
